@@ -7,6 +7,7 @@ import './index.css';
 import Onboarding from './pages/Onboarding.jsx'
 import Login from './pages/Login.jsx'
 
+
 const router= createBrowserRouter([
   {element : <RootLayout />,
     children:[

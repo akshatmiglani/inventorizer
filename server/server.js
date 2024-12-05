@@ -9,12 +9,26 @@ const app=express();
 
 connectDB();
 
-app.use(cors());
+app.use(
+    cors({
+      origin: "http://localhost:5173",
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
+    })
+  );
+  
 app.use(express.json());
 
-app.use('/api/v1/user',userRoutes);
+app.use("/api/v1/userRoutes", userRoutes);
+
+app.get("/", (req, res) => {
+  console.log("Its Working");
+});
+
 
 const PORT=process.env.PORT;
+
 app.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)
 })
