@@ -16,24 +16,31 @@ const Onboarding = () => {
 
     const [currentStep, setStep] = useState(1);
 
-    const [formData,setFormData]=useState({
-        businessName:'',
-        logo:null,
-        email:'',
-        address:'',
-        gstNumber:'',
-        password:'',
-        products:null
+    const [formData, setFormData] = useState({
+        businessName: '',
+        logo: null,
+        email: '',
+        address: '',
+        gstNumber: '',
+        password: '',
+        products: null
     });
 
-    const handleInputChange=(e)=>{
-        const {name,value}=e.target;
-        setFormData({...formData,[name]:value});
-    }
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
-    const handleFileChange=(e)=>{
-        setFormData({...formData,logo:e.target.files[0]});
-    }
+    const handleFileChange = (e) => {
+        const { name, files } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: files[0],  
+        }));
+    };
 
     const nextStep = () => {
         if (currentStep < 3) {
@@ -51,188 +58,226 @@ const Onboarding = () => {
         3: three,
     };
 
+    const submitForm = async () => {
+        try {
+            const formDataForSubmission = new FormData();
+    
+            formDataForSubmission.append('businessName', formData.businessName);
+            formDataForSubmission.append('email', formData.email);
+            formDataForSubmission.append('address', formData.address);
+            formDataForSubmission.append('gstNumber', formData.gstNumber);
+            formDataForSubmission.append('password', formData.password);
+    
+            if (formData.logo) formDataForSubmission.append('logo', formData.logo);
+            if (formData.products) formDataForSubmission.append('products', formData.products);
+            
+            for (let [key, value] of formDataForSubmission.entries()) {
+                console.log(`${key}:`, value);
+            }
+    
+            const response = await fetch('http://localhost:4000/api/v1/registrationRoutes', {
+                method: 'POST',
+                body: formDataForSubmission,
+            });
+    
+            const result = await response.json();
+    
+            if (response.status === 201) {
+                toast.success('Registration successful! Login to access the dashboard', { autoClose: 15000 });
+            } else {
+                toast.error(result.error || 'Something went wrong during submission!');
+                setFormData({
+                    businessName: '',
+                    logo: null,
+                    email: '',
+                    address: '',
+                    gstNumber: '',
+                    password: '',
+                    products: null
+                });
+            }
+        } catch (error) {
+            toast.error('An error occurred during submission!');
+            console.error(error);
+        }
+    };
 
-    const submitForm=async()=>{
-        const formDataForSubmission=new FormData();
-        
-    }
-    return <>
-        <div className='flex flex-col items-center justify-center h-screen bg-gray-50 rounded-lg border-solid border-2'>
-            <ToastContainer position="bottom-right" />
-            <motion.div
-                className='w-full max-w-2xl border-solid border-2 border-black p-8 rounded-lg shadow-lg '
-                initial="hidden"
-                animate="visible"
-                variants={stepVariants}
-            >
-                <h2 className='text-3xl font-semibold text-center mb-6 flex justify-center items-center'>
-                    <img className={imgIconStyle} src={stepImages[currentStep]} alt={`Step ${currentStep} Image`} /> <span className='p-3 text-xl'>of</span>  <img className={imgIconStyle} src={three} alt='Three Image' />
-                </h2>
+    return (
+        <>
+            <div className='flex flex-col items-center justify-center h-screen bg-gray-50 rounded-lg border-solid border-2'>
+                <ToastContainer position="bottom-right" />
+                <motion.div
+                    className='w-full max-w-2xl border-solid border-2 border-black p-8 rounded-lg shadow-lg '
+                    initial="hidden"
+                    animate="visible"
+                    variants={stepVariants}
+                >
+                    <h2 className='text-3xl font-semibold text-center mb-6 flex justify-center items-center'>
+                        <img className={imgIconStyle} src={stepImages[currentStep]} alt={`Step ${currentStep} Image`} />
+                        <span className='p-3 text-xl'>of</span>  
+                        <img className={imgIconStyle} src={three} alt='Three Image' />
+                    </h2>
 
-                {currentStep == 1 && (
-                    <div>
-                        <h3 className='text-center text-xl font-medium pb-5'>Business Details</h3>
-                        <form>
+                    {currentStep === 1 && (
+                        <div>
+                            <h3 className='text-center text-xl font-medium pb-5'>Business Details</h3>
+                            <form>
+                                <div className='mb-6'>
+                                    <label
+                                        htmlFor="Business Name"
+                                        className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
+                                    >
+                                        <span className="text-xs font-medium text-gray-700"> Business Name </span>
+                                        <input
+                                            type="text"
+                                            name="businessName"
+                                            id="Business Name"
+                                            value={formData.businessName}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter your business name:"
+                                            required
+                                            className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                                        />
+                                    </label>
+                                </div>
+                                <div className='mb-6'>
+                                    <label
+                                        htmlFor="Business Logo"
+                                        className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
+                                    >
+                                        <span className="text-xs font-medium text-gray-700"> Logo </span>
+                                        <input
+                                            type="file"
+                                            id="Logo"
+                                            name="logo"
+                                            placeholder="Upload logo"
+                                            accept='.jpg,.jpeg,.png'
+                                            onChange={handleFileChange}
+                                            required
+                                            className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                                        />
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    )}
 
-                            <div className='mb-6'>
+                    {currentStep === 2 && (
+                        <div>
+                            <h3 className='text-center text-xl font-medium pb-5'>Contact/Login Details</h3>
+                            <form>
+                                <div className='mb-4'>
+                                    <label
+                                        htmlFor="Email"
+                                        className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
+                                    >
+                                        <span className="text-xs font-medium text-gray-700"> Email </span>
+                                        <input
+                                            type="email"
+                                            id="Email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter your business email"
+                                            required
+                                            className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                                        />
+                                    </label>
+                                </div>
+                                <div className='mb-6'>
+                                    <label
+                                        htmlFor="password"
+                                        className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
+                                    >
+                                        <span className="text-xs font-medium text-gray-700"> Password </span>
+                                        <input
+                                            type="password"
+                                            id="password"
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter your password"
+                                            required
+                                            className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                                        />
+                                    </label>
+                                </div>
+                                <div className='mb-6'>
+                                    <label
+                                        htmlFor="GST Number"
+                                        className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
+                                    >
+                                        <span className="text-xs font-medium text-gray-700"> GST Number </span>
+                                        <input
+                                            type="text"
+                                            id="GSTNum"
+                                            name="gstNumber"
+                                            value={formData.gstNumber}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="Enter your GST Number:"
+                                            className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                                        />
+                                    </label>
+                                </div>
+                                <div className='mb-6'>
+                                    <label
+                                        htmlFor="Address"
+                                        className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
+                                    >
+                                        <span className="text-xs font-medium text-gray-700"> Registered Business Address </span>
+                                        <input
+                                            type="text"
+                                            id="Address"
+                                            name="address"
+                                            value={formData.address}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="Enter your business address"
+                                            className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                                        />
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+
+                    {currentStep === 3 && (
+                        <div>
+                            <h3 className='text-center text-xl font-medium pb-5'>Import Products</h3>
+                            <form>
                                 <label
-                                    htmlFor="Business Name"
+                                    htmlFor="Products"
                                     className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
                                 >
-                                    <span className="text-xs font-medium text-gray-700"> Business Name </span>
-
-                                    <input
-                                        type="text"
-                                        id="Business Name"
-                                        value={formData.businessName}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your business name:"
-                                        className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                                    />
-                                </label>
-                            </div>
-                            <div className='mb-6'>
-                                <label
-                                    htmlFor="Business Logo"
-                                    className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
-                                >
-                                    <span className="text-xs font-medium text-gray-700"> Logo </span>
-
+                                    <span className="text-xs font-medium text-gray-700"> Products </span>
+                                    <p className='text-xs text-red-500 mb-3'>Excel Sheet Guidelines: Name of Product | Quantity </p>
                                     <input
                                         type="file"
-                                        id="Logo"
-                                        placeholder="Upload logo"
-                                        accept='.jpg,.jpeg,.png'
+                                        id="Products"
+                                        name="products"
+                                        accept='.xls,.xlsx'
                                         onChange={handleFileChange}
+                                        required
                                         className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                                     />
                                 </label>
-                            </div>
-                        </form>
-                    </div>
-
-
-                )}
-
-                {currentStep == 2 && (
-                    <div>
-                        <h3 className='text-center text-xl font-medium pb-5'>Contact/Login Details</h3>
-                        <form>
-                            <div className='mb-4'>
-                                <label
-                                    htmlFor="Email"
-                                    className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
-                                >
-                                    <span className="text-xs font-medium text-gray-700"> Email </span>
-
-                                    <input
-                                        type="email"
-                                        id="Number"
-                                        value={formData.email}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your business email"
-                                        className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                                    />
-                                </label>
-                            </div>
-
-                            <div className='mb-6'>
-                                <label
-                                    htmlFor="password"
-                                    className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
-                                >
-                                    <span className="text-xs font-medium text-gray-700"> Password </span>
-
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your password"
-                                        className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                                    />
-                                </label>
-                            </div>
-
-                            <div className='mb-6'>
-                                <label
-                                    htmlFor="GST Number"
-                                    className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
-                                >
-                                    <span className="text-xs font-medium text-gray-700"> GST Number </span>
-
-                                    <input
-                                        type="text"
-                                        id="GSTNum"
-                                        value={formData.gstNumber}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your GST Number:"
-                                        className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                                    />
-                                </label>
-                            </div>
-
-                            <div className='mb-6'>
-                                <label
-                                    htmlFor="Address"
-                                    className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
-                                >
-                                    <span className="text-xs font-medium text-gray-700"> Registered Business Address </span>
-
-                                    <input
-                                        type="text"
-                                        id="Address"
-                                        value={formData.address}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your business addresss"
-                                        className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                                    />
-                                </label>
-                            </div>
-                        </form>
-                    </div>
-
-
-                )}
-
-                {currentStep == 3 && (
-                    <div>
-                        <h3 className='text-center text-xl font-medium pb-5'>Import Products</h3>
-                        <form>
-                            <label
-                                htmlFor="Products"
-                                className="block overflow-hidden rounded-md border border-gray-200 px-3 py-2 shadow-sm focus-within:border-black focus-within:ring-1 focus-within:ring-black"
-                            >
-                                <span className="text-xs font-medium text-gray-700"> Products </span>
-                                <p className='text-xs text-red-500 mb-3'>Excel Sheet Guidelines: Name of Product | Quantity </p>
-                                <input
-                                    type="file"
-                                    id="Products"
-                                    accept='.xslx,.xls'
-                                    onChange={handleFileChange}
-                                    placeholder="Upload excel sheet of products (column name guidelines: Name of Product | Quantity )"
-                                    className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                                />
-                            </label>
-                        </form>
-                    </div>
-
-
-                )}
-
-                <div className='flex justify-end mt-6'>
-                    {currentStep > 1 && (
-                        <button onClick={prevStep} className='bg-gray-300 px-5 m-2 py-2 rounded-lg text-white hover:bg-gray-400'>Back</button>
+                            </form>
+                        </div>
                     )}
-                    <button onClick={nextStep} className='bg-green-500 px-5 m-2 py-2 rounded-lg text-white hover:bg-green-400'>{currentStep === 3 ? 'Submit' : 'Next'}</button>
 
-                </div>
-
-            </motion.div>
-        </div>
-
-    </>
+                    <div className='flex justify-end mt-6'>
+                        {currentStep > 1 && (
+                            <button onClick={prevStep} className='bg-gray-300 px-5 m-2 py-2 rounded-lg text-white hover:bg-gray-400'>Back</button>
+                        )}
+                        <button onClick={nextStep} className='bg-green-500 px-5 m-2 py-2 rounded-lg text-white hover:bg-green-400'>
+                            {currentStep === 3 ? 'Submit' : 'Next'}
+                        </button>
+                    </div>
+                </motion.div>
+            </div>
+        </>
+    );
 }
 
-export default Onboarding
-
+export default Onboarding;

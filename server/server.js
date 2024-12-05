@@ -2,7 +2,7 @@ const express=require('express');
 const dotenv=require('dotenv');
 const cors=require('cors');
 const connectDB=require('./config/db')
-const userRoutes=require('./routes/userRoutes')
+const registerRoute=require('./routes/registerRoutes')
 
 dotenv.config()
 const app=express();
@@ -20,7 +20,7 @@ app.use(
   
 app.use(express.json());
 
-app.use("/api/v1/userRoutes", userRoutes);
+app.use("/api/v1/registrationRoutes", registerRoute);
 
 app.get("/", (req, res) => {
   console.log("Its Working");
