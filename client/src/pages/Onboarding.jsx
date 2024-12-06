@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import one from '/one.png'
 import two from '/two.png'
@@ -6,6 +6,7 @@ import three from '/three.png'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from '../context/UserProvider'
 
 const stepVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -15,9 +16,21 @@ const stepVariants = {
 const imgIconStyle = "h-6 w-6";
 const Onboarding = () => {
 
+
     const [currentStep, setStep] = useState(1);
 
     const navigate=useNavigate();
+
+    const {user} = useUserContext();
+
+  
+    useEffect(()=>{
+      if(user){
+        navigate('/dashboard');
+      }
+    },[user,navigate]);
+
+    
 
     const [formData, setFormData] = useState({
         businessName: '',
@@ -74,9 +87,9 @@ const Onboarding = () => {
             if (formData.logo) formDataForSubmission.append('logo', formData.logo);
             if (formData.products) formDataForSubmission.append('products', formData.products);
             
-            for (let [key, value] of formDataForSubmission.entries()) {
-                console.log(`${key}:`, value);
-            }
+            // for (let [key, value] of formDataForSubmission.entries()) {
+            //     console.log(`${key}:`, value);
+            // }
     
             const response = await fetch('http://localhost:4000/api/v1/registrationRoutes', {
                 method: 'POST',
@@ -88,28 +101,20 @@ const Onboarding = () => {
             if (response.status === 201) { 
                 toast.success(result.message || 'Registration successful! Login to access the dashboard', { autoClose: 15000 });
                 navigate("/login");
-                setFormData({
-                    businessName: '',
-                    logo: null,
-                    email: '',
-                    address: '',
-                    gstNumber: '',
-                    password: '',
-                    products: null
-                });
+
             } else {
                 toast.error(result.error || 'Something went wrong during submission!');
-                setFormData({
-                    businessName: '',
-                    logo: null,
-                    email: '',
-                    address: '',
-                    gstNumber: '',
-                    password: '',
-                    products: null
-                });
                 setStep(1);
             }
+            setFormData({
+                businessName: '',
+                logo: null,
+                email: '',
+                address: '',
+                gstNumber: '',
+                password: '',
+                products: null
+            });
         } catch (error) {
             toast.error('An error occurred during submission!');
             console.error(error);

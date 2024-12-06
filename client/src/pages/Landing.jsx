@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { useUserContext } from '../context/UserProvider';
 
 const leftContainer = {
   hidden: { opacity: 0, x: -50 }, 
@@ -19,6 +20,15 @@ const textHover = {
 
 
 const Landing = () => {
+  
+  const {user} = useUserContext();
+  const navigate= useNavigate();
+
+  useEffect(()=>{
+    if(user){
+      navigate('/dashboard');
+    }
+  },[user,navigate]);
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 h-screen">
       <Link to="/register">
