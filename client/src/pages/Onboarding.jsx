@@ -74,9 +74,9 @@ const Onboarding = () => {
             if (formData.logo) formDataForSubmission.append('logo', formData.logo);
             if (formData.products) formDataForSubmission.append('products', formData.products);
             
-            for (let [key, value] of formDataForSubmission.entries()) {
-                console.log(`${key}:`, value);
-            }
+            // for (let [key, value] of formDataForSubmission.entries()) {
+            //     console.log(`${key}:`, value);
+            // }
     
             const response = await fetch('http://localhost:4000/api/v1/registrationRoutes', {
                 method: 'POST',
@@ -88,28 +88,20 @@ const Onboarding = () => {
             if (response.status === 201) { 
                 toast.success(result.message || 'Registration successful! Login to access the dashboard', { autoClose: 15000 });
                 navigate("/login");
-                setFormData({
-                    businessName: '',
-                    logo: null,
-                    email: '',
-                    address: '',
-                    gstNumber: '',
-                    password: '',
-                    products: null
-                });
+
             } else {
                 toast.error(result.error || 'Something went wrong during submission!');
-                setFormData({
-                    businessName: '',
-                    logo: null,
-                    email: '',
-                    address: '',
-                    gstNumber: '',
-                    password: '',
-                    products: null
-                });
                 setStep(1);
             }
+            setFormData({
+                businessName: '',
+                logo: null,
+                email: '',
+                address: '',
+                gstNumber: '',
+                password: '',
+                products: null
+            });
         } catch (error) {
             toast.error('An error occurred during submission!');
             console.error(error);
