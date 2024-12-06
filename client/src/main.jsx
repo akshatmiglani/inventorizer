@@ -9,6 +9,8 @@ import Login from './pages/Login.jsx'
 import UserProvider from './context/UserProvider.jsx'
 import ProtectedRoute from './context/ProtectedRoute.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import DashboardInventory from './pages/DashboardInventory.jsx'
+import DashboardInvoice from './pages/DashboardInvoice.jsx'
 
 
 const router= createBrowserRouter([
@@ -23,7 +25,12 @@ const router= createBrowserRouter([
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
-        )
+        ),
+        children:[
+          {path:'manage-inventory',element:<DashboardInventory />},
+          {path:'create-invoice',element:<DashboardInvoice />},
+          {path:'view-invoice',element:<DashboardInvoice />}
+        ]
       }
 
     ]
