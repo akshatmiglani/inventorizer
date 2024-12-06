@@ -6,8 +6,8 @@ const bcrypt = require('bcrypt');
 const xlsx = require('xlsx');
 const fs = require('fs');
 const User = require('../models/User');
-const Business  = require('../models/Businessinfo');
-const Product  = require('../models/Product');
+const Business = require('../models/Businessinfo');
+const Product = require('../models/Product');
 
 const router = express.Router();
 
@@ -66,6 +66,7 @@ router.post('/', upload.fields([
                     name: row['Product'],
                     quantity: row['Quantity'],
                 }));
+                console.log(products);
 
                 const newProduct = new Product({
                     businessId: newBusiness._id,
@@ -76,12 +77,14 @@ router.post('/', upload.fields([
 
                 fs.unlinkSync(productsFilePath);
 
-            }
-            
-        }catch(error){
+            };
+
+            return res.status(201).json({ message: 'Registration successful!' });
+
+        } catch (error) {
             console.error(error);
-        res.status(500).json({ error: 'Server error' });
+            return res.status(500).json({ error: 'Server error' });
         }
-})
+    })
 
 module.exports = router;

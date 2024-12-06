@@ -5,6 +5,7 @@ import two from '/two.png'
 import three from '/three.png'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
 
 const stepVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -15,6 +16,8 @@ const imgIconStyle = "h-6 w-6";
 const Onboarding = () => {
 
     const [currentStep, setStep] = useState(1);
+
+    const navigate=useNavigate();
 
     const [formData, setFormData] = useState({
         businessName: '',
@@ -82,8 +85,18 @@ const Onboarding = () => {
     
             const result = await response.json();
     
-            if (response.status === 201) {
-                toast.success('Registration successful! Login to access the dashboard', { autoClose: 15000 });
+            if (response.status === 201) { 
+                toast.success(result.message || 'Registration successful! Login to access the dashboard', { autoClose: 15000 });
+                navigate("/login");
+                setFormData({
+                    businessName: '',
+                    logo: null,
+                    email: '',
+                    address: '',
+                    gstNumber: '',
+                    password: '',
+                    products: null
+                });
             } else {
                 toast.error(result.error || 'Something went wrong during submission!');
                 setFormData({
@@ -95,6 +108,7 @@ const Onboarding = () => {
                     password: '',
                     products: null
                 });
+                setStep(1);
             }
         } catch (error) {
             toast.error('An error occurred during submission!');
