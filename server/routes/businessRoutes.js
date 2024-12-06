@@ -9,8 +9,8 @@ const Product = require('../models/Product');
 router.use(authMiddleware)
 
 router.get('/getDetails', async (req, res) => {
-    console.log('Hi');
-    console.log('User ID from token:', req.user);
+    // console.log('Hi');
+    // console.log('User ID from token:', req.user);
 
     try {
         const business = await Business.findOne({ userId: req.user.id })
@@ -33,7 +33,7 @@ router.get('/getDetails', async (req, res) => {
 })
 
 router.get('/:businessId/products', async (req, res) => {
-
+    
     try {
         const { businessId } = req.params;
         const products = await Product.findOne({ businessId });
@@ -51,6 +51,7 @@ router.get('/:businessId/products', async (req, res) => {
 
 router.put('/:businessId/products/update', async (req, res) => {
     const { businessId } = req.params;
+    // console.log('businessId from route:', businessId);
     const { name, quantityChange } = req.body;
 
     try {
@@ -70,7 +71,7 @@ router.put('/:businessId/products/update', async (req, res) => {
         if (product.quantity < 0) {
             return res.status(400).json({ message: 'Stock cannot be negative' });
         }
-
+        products.markModified('products');
         await products.save();
         res.json({ message: 'Stock updated successfully', products: products.products });
 
