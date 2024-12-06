@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import one from '/one.png'
 import two from '/two.png'
@@ -6,6 +6,7 @@ import three from '/three.png'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from '../context/UserProvider'
 
 const stepVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -15,9 +16,21 @@ const stepVariants = {
 const imgIconStyle = "h-6 w-6";
 const Onboarding = () => {
 
+
     const [currentStep, setStep] = useState(1);
 
     const navigate=useNavigate();
+
+    const {user} = useUserContext();
+
+  
+    useEffect(()=>{
+      if(user){
+        navigate('/dashboard');
+      }
+    },[user,navigate]);
+
+    
 
     const [formData, setFormData] = useState({
         businessName: '',

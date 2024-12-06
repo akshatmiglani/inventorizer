@@ -1,45 +1,64 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import login from '/login.jpg'
 import { useNavigate } from 'react-router'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useUserContext } from '../context/UserProvider';
 
 
 const Login = () => {
 
+  const { user, setUser } = useUserContext();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+
   const [loginData, setLoginData] = useState({
     email: '',
     password: ''
   });
 
-  const submitForm = async () => {
-    const formDataForSubmission = new FormData();
-    formDataForSubmission.append('email', loginData.email);
-    formDataForSubmission.append('password', loginData.password);
-
-
-    const response = await fetch('http://localhost:4000/api/v1/authRoutes/login', {
-      method: 'POST',
-      body: formDataForSubmission,
-  });
-
-  const result = await response.json();
-
-  if(result.response===201){
-
-  }else{
-
-  }
-
-
-
-  }
+  const submitForm = async (event) => {
+    event.preventDefault();
+    console.log('Login Data Before Submission:', loginData);
+  
+    try {
+      const response = await fetch('http://localhost:4000/api/v1/authRoutes/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify(loginData), 
+        credentials: 'include',
+      });
+  
+      const result = await response.json();
+  
+      if (response.status === 200) {
+        toast.success(result.message, { autoClose: 15000 });
+        setUser(result.user);
+        navigate('/dashboard');
+      } else {
+        toast.error(result.message || 'Something went wrong during submission!');
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred during login.');
+      console.error('Error:', error);
+    } finally {
+      setLoginData({ email: '', password: '' });
+    }
+  };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setLoginData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -94,6 +113,7 @@ const Login = () => {
               <div className="relative">
                 <input
                   type="password"
+                  name="password"
                   className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
                   value={loginData.password}
                   onChange={handleInputChange}
@@ -128,7 +148,7 @@ const Login = () => {
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500">
                 No account?
-                <a className="underline" href="#">Sign up</a>
+                <a className="underline" href="/register">Sign up</a>
               </p>
 
               <button

@@ -6,6 +6,9 @@ import Landing from './pages/Landing.jsx'
 import './index.css';
 import Onboarding from './pages/Onboarding.jsx'
 import Login from './pages/Login.jsx'
+import UserProvider from './context/UserProvider.jsx'
+import ProtectedRoute from './context/ProtectedRoute.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 
 
 const router= createBrowserRouter([
@@ -14,6 +17,14 @@ const router= createBrowserRouter([
       {path:'/',element: <Landing />},
       {path:'/register',element:<Onboarding />},
       {path:'/login',element:<Login />},
+      {
+        path:'/dashboard',
+        element:(
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        )
+      }
 
     ]
   }
@@ -21,6 +32,8 @@ const router= createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
   </StrictMode>,
 )

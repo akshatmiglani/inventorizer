@@ -4,7 +4,8 @@ const cors=require('cors');
 const connectDB=require('./config/db')
 const registerRoute=require('./routes/registerRoutes')
 const authRoute=require('./routes/authRoutes')
-
+const userRoute=require('./routes/userRoutes')
+const cookieParser = require('cookie-parser');
 dotenv.config()
 const app=express();
 
@@ -20,9 +21,12 @@ app.use(
   );
   
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use("/api/v1/registrationRoutes", registerRoute);
 app.use("/api/v1/authRoutes", authRoute);
+app.use("/api/v1/userRoutes", userRoute);
 
 app.get("/", (req, res) => {
   console.log("Its Working");
