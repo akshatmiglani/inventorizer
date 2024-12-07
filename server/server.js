@@ -6,6 +6,8 @@ const registerRoute=require('./routes/registerRoutes')
 const authRoute=require('./routes/authRoutes')
 const userRoute=require('./routes/userRoutes')
 const businessRoute=require('./routes/businessRoutes')
+const invoiceRoute=require('./routes/invoiceRoutes')
+
 const path=require('path')
 const cookieParser = require('cookie-parser');
 dotenv.config()
@@ -31,6 +33,7 @@ app.use("/api/v1/registrationRoutes", registerRoute);
 app.use("/api/v1/authRoutes", authRoute);
 app.use("/api/v1/userRoutes", userRoute);
 app.use("/api/v1/businessRoutes", businessRoute);
+app.use("/api/v1/invoiceRoutes",invoiceRoute);
 
 app.get("/", (req, res) => {
   console.log("Its Working");

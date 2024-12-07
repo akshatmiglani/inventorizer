@@ -32,7 +32,8 @@ const UserProvider = ({children}) => {
     const logout=async(e)=>{
         
         try {
-            document.cookie="token=; Max-age=-999999;";
+            document.cookie = "token=; Max-Age=-99999999; path=/;";
+            localStorage.removeItem('token');
             const response= await axios.post('http://localhost:4000/api/v1/authRoutes/logout',{
                 withCredentials:true,
             });
