@@ -26,8 +26,6 @@ const Sidebar = ({ links, isSidebarOpen, setIsSidebarOpen }) => {
 
 
     const logoutButton = async (e) => {
-        e.preventDefault();
-
         await logout();
 
         toast.success('User logged out!')

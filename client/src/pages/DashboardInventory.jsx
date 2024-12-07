@@ -109,7 +109,7 @@ const DashboardInventory = () => {
             <tr>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Product Name</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Quantity</th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Actions</th>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Update Stock</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
