@@ -242,7 +242,7 @@ const DashboardInvoice = () => {
         <div className='m-5 border border-black'></div>
 
         <div className="text-right mr-10">
-          <h3 className="text-lg font-bold">Total Amount: ${totalAmount.toFixed(2)}</h3>
+          <h3 className="text-lg font-bold">Total Amount: Rs.{totalAmount.toFixed(2)}</h3>
           <button
             type="submit"
             className="mt-4 px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-black"
