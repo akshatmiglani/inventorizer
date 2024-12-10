@@ -33,12 +33,11 @@ const UserProvider = ({children}) => {
         
         try {
             document.cookie = "token=; Max-Age=-99999999; path=/;";
-            localStorage.removeItem('token');
+        
             const response= await axios.post('http://localhost:4000/api/v1/authRoutes/logout',{
                 withCredentials:true,
             });
-            const result=response.json();
-            if(result.status === 200){
+            if(response.status === 200){
                 setUser(null);
                 console.log("User logged out!")
             }
@@ -50,13 +49,8 @@ const UserProvider = ({children}) => {
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('token'); 
-        if (token) {
-            fetchUser();  
-        } else {
-            setLoading(false);  
-        }
-    }, []); 
+        fetchUser();  
+    }, [])
 
     return (
         <UserContext.Provider value={{ user, setUser, loading, logout }}>

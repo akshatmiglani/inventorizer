@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useBusinessContext } from '../context/BusinessProvider';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DashboardInvoice = () => {
 
@@ -33,12 +35,12 @@ const DashboardInvoice = () => {
 
 
     if(!customer.name || !customer.email || !customer.phonenumber){
-      alert(' Provide complete customer details.');
+      toast.warn('Customer details not entered correctly!');
       return;
     }
 
     if(selectedProducts.length === 0){
-      alert('Products zero');
+      toast.warn('No products selected');
       return;
     }
 
@@ -56,13 +58,13 @@ const DashboardInvoice = () => {
         setCustomer({ name: '', email: '', phonenumber: '' });
         setSelectedProducts([]);
         setTotalAmount(0);
-        alert('Invoice created succesfully!');
+        toast.success('Invoice created!');
         return; 
       }
 
     } catch (error) {
       console.log('Error creating invoice',error);
-      alert('Error creating invoice. Please try again!');
+      toast.error(`Error in creating invoice : ${error}`);
       return;
     }
   };
@@ -102,6 +104,7 @@ const DashboardInvoice = () => {
   if (!business) { return <div>Business Details Not Found....</div> }
   return (
     <>
+      <ToastContainer position="bottom-right" />
       <h1 className="text-center mt-2 pb-1 font-sans font-medium">Create new Invoice</h1>
       <div className='m-5 border border-gray'></div>
 

@@ -1,12 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useBusinessContext } from '../context/BusinessProvider';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DashboardInventory = () => {
   const [products, setProducts] = useState([]);
   const { business, loading } = useBusinessContext();
   const [quantityMap, setQuantityMap] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [newFile, setNewfile] = useState(null);
 
   useEffect(() => {
     if (business?.businessId) {
@@ -49,12 +52,47 @@ const DashboardInventory = () => {
         ...prev,
         [name]: 0,
       }));
+      toast.success(`Stock updated succesfully for ${name}`);
     } catch (error) {
       console.error('Error updating stock:', error);
+      toast.error(`Error in updating stock : ${name} : ${error}`);
     }
   };
 
   const filteredProducts = products.filter((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const addNewProducts = async (e) => {
+    e.preventDefault();
+
+    if(!newFile){
+      toast.warn('New product sheet not selected!')
+      return;
+    }
+    const formData=new FormData();
+    formData.append('products',newFile);
+
+    try{
+      console.log("Hi")
+      const response = await axios.post(`http://localhost:4000/api/v1/businessRoutes/${business.businessId}/products/add-new`,formData,{withCredentials:"true"});
+      console.log("Products updated");
+      setProducts(response.data.products);
+      toast.success(`New products succesfully added!`);
+
+    }catch(err){
+      console.error('Error updating stock:', err);
+      toast.error(`Error in adding new products: ${err}`);
+    }finally{
+      setNewfile(null);
+    }
+
+
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setNewfile(file);
+  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -67,6 +105,7 @@ const DashboardInventory = () => {
 
   return (
     <div>
+      <ToastContainer position="bottom-right" />
       <h1 className="text-center mt-2 pb-1 font-sans font-medium">Manage Stock</h1>
 
       <div className="relative m-4">
@@ -153,7 +192,35 @@ const DashboardInventory = () => {
           </tbody>
         </table>
       </div>
+
+      <div className='relative'>
+        <h2 className='font-medium'>Add new products --</h2>
+
+        <form onSubmit={addNewProducts}>
+          <span className="text-xs font-medium text-gray-700"> Products </span>
+          <p className='text-xs text-red-500 mb-3'>Excel Sheet Guidelines: Name of Product | Quantity </p>
+          <div className='flex justify-end ml-auto'>
+            <input
+              type="file"
+              id="Products"
+              name="products"
+              accept='.xls,.xlsx'
+              onChange={handleFileChange}
+              required
+              className="mt-1 w-full border-none p-0 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm text-right"
+            />
+          </div>
+
+          <button className='bg-blue-500 mt-2 p-2 rounded-lg text-white hover:bg-green-400'>
+            Submit
+          </button>
+        </form>
+
+      </div>
+
     </div>
+
+
   );
 };
 

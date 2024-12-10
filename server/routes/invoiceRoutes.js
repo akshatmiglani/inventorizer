@@ -98,7 +98,7 @@ router.get('/:businessId/invoices',async(req,res)=>{
         const {businessId} = req.params;
 
         const invoices = await Invoice.find({businessId});
-        console.log('Invoices:', invoices);
+        // console.log('Invoices:', invoices);
         
 
         res.status(200).json(invoices);
