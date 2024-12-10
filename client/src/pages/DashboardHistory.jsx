@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useBusinessContext } from '../context/BusinessProvider';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DashboardHistory = () => {
 
@@ -21,10 +23,12 @@ const DashboardHistory = () => {
       console.log(invoices);
     } catch (error) {
       console.error('Error fetching products:', error);
+      toast.error(`Unable to fetch invoices, no invocies present! ${errpr}`)
     }
   };
 
   const handleViewPDF = (pdfUrl) => {
+    toast.success('Opening PDF in new window:')
     window.open(pdfUrl, '_blank');
   };
 
@@ -36,6 +40,7 @@ const DashboardHistory = () => {
 
   return (
     <div>
+      <ToastContainer position="bottom-right" />
       <h1 className="text-center m-5 pb-5 font-sans font-medium">View Invoices</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
