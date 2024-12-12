@@ -23,7 +23,7 @@ The application is built using the MERN stack
 
 1. Clone the repository.
 ```bash
-git clone 
+git clone https://github.com/akshatmiglani/inventorizer.git
 cd inventorizer
 ```
 
