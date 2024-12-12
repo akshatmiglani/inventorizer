@@ -34,9 +34,18 @@ npm i
 Creatae a .env file in the server directory with:
 
 ```bash
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
 PORT=4000
+MONGO_URI=
+JWT_SECRET=
+AWS_ACCESS_KEY=
+AWS_SECRET_KEY=
+AWS_REGION=
+S3_BUCKET_NAME=
+MAIL_USERNAME=
+MAIL_PASSWORD=
+OAUTH_CLIENTID=
+OAUTH_CLIENT_SECRET=
+OAUTH_REFRESH_TOKEN=
 ```
 
 3. Frontend Setup
@@ -47,3 +56,52 @@ npm start
 ```
 
 ## API Endpoints
+
+### Registration Routes
+Base URL: /api/v1/registerRoutes
+
+1. POST /
+-This handles user creation, business details and intital product inventory.
+
+### Auth Routes
+Base URL : /api/v1/authRoutes
+1. POST /login
+-Login route which saves token as HTTP Cookie.
+
+2. POST /logout
+-Logout route which clears the cookie.
+
+### User Routes
+Base URL : /api/v1/userRoute
+
+1. GET /me
+-Authenticated route for getting user details for context.
+
+### Business Routes
+Base URL : /api/v1/businessRoute
+
+1. GET /getDetails
+-Authenticated route for getting business details for user.
+
+2. GET /:businessId/products
+-Authenticated route for getting products of a business.
+
+3. PUT /:businessId/products/update
+-Updating the quanitity of products.
+
+4. POST /:businessId/products/add-new
+-Adding new products
+
+### Invoice Routes
+Base URL : /api/v1/invoiceRoute
+
+1. GET /:businessId/invoices
+-To fetch details of existing invoices.
+
+2. POST /:businessId/new
+-To create new invoices.
+
+
+
+
+
