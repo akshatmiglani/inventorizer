@@ -48,7 +48,7 @@ const DashboardHistory = () => {
             <tr>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Date</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Customer Name</th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Total Amount</th>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Final Amount</th>
               <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Actions</th>
             </tr>
           </thead>
@@ -59,7 +59,7 @@ const DashboardHistory = () => {
               <tr key='invoice._id'>
                 <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{new Date(invoice.createdAt).toLocaleDateString()}</td>
                 <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{invoice.customer.name}</td>
-                <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{invoice.totalamount}</td>
+                <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{invoice.finalamount}</td>
                 <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
                   <button className="inline-block rounded border border-white bg-red-600 px-12 py-3 text-sm font-medium text-white " onClick={()=>handleViewPDF(invoice.pdfInvoice)}>
                     View PDF

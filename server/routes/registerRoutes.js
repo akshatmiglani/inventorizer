@@ -65,6 +65,7 @@ router.post('/', upload.fields([
                 const products = data.map(row => ({
                     name: row['Product'],
                     quantity: row['Quantity'],
+                    price:row['Price'],
                 }));
                 console.log(products);
 

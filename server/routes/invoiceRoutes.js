@@ -67,6 +67,8 @@ router.post('/:businessId/new',async(req,res)=>{
             product: invoiceData.products,
             totalamount: invoiceData.totalAmount,
             pdfInvoice: fileUrl,
+            discount: invoiceData.discount,
+            finalamount: invoiceData.finalTotal
           });
       
         const savedInvoice = await newInvoice.save();

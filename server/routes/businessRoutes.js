@@ -101,6 +101,7 @@ router.post('/:businessId/products/add-new', upload.single('products') , async (
         const products = data.map(row => ({
             name: row['Product'],
             quantity: parseInt(row['Quantity'],10),
+            price:parseInt(row['Price'],10),
         }));
         
         let existingProducts = await Product.findOne({ businessId });

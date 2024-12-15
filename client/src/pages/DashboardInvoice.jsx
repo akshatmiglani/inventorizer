@@ -9,9 +9,12 @@ const DashboardInvoice = () => {
   const [customer, setCustomer] = useState({ name: '', email: '', phonenumber: '' });
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [finalTotal,setFinalTotal] = useState(0);
   const [products, setProducts] = useState([]);
   const { business, loading } = useBusinessContext();
   const [searchQuery, setSearchQuery] = useState("");
+  const [discount,setDiscount]=useState(0);
+
 
   useEffect(() => {
     if (business?.businessId) {
@@ -48,7 +51,9 @@ const DashboardInvoice = () => {
       const invoiceData={
         customer,
         products: selectedProducts,
-        totalAmount
+        totalAmount,
+        discount,
+        finalTotal
       };
       console.log(invoiceData);
 
@@ -58,6 +63,8 @@ const DashboardInvoice = () => {
         setCustomer({ name: '', email: '', phonenumber: '' });
         setSelectedProducts([]);
         setTotalAmount(0);
+        setFinalTotal(0);
+        setDiscount(0);
         toast.success('Invoice created!');
         return; 
       }
@@ -71,30 +78,41 @@ const DashboardInvoice = () => {
 
   const onProductChange = (productName, field, value) => {
     setSelectedProducts((prev) => {
-      const existingProduct = prev.find((p) => p.name === productName); 
+      const product = products.find((p) => p.name === productName); 
+      if(!product) return prev;
+
       let updatedProducts;
-  
+      const existingProduct = prev.find((p) => p.name === productName); 
+      
       if (existingProduct) {
         updatedProducts = prev.map((p) => 
           p.name === productName
-            ? { ...p, [field]: value, total: (field === "quantity" ? value : p.quantity) * (field === "price" ? value : p.price || 0) }
+            ? { ...p, [field]: value, total: (field === "quantity" ? value : p.quantity) * product.price, }
             : p
         );
       } else {
-        const product = products.find((p) => p.name === productName);
         updatedProducts = [
           ...prev,
-          { name: product.name, quantity: 1, price: 0, total: 0 },
+          { name: product.name, quantity: 1, price: product.price, total: product.price },
         ];
       }
   
-      const newTotal = updatedProducts.reduce((sum, p) => sum + (p.total || 0), 0);
-      setTotalAmount(newTotal);
+      const grossTotal = updatedProducts.reduce((sum, p) => sum + (p.total || 0), 0);
+      const discountTotal = Math.max(0,grossTotal-discount);
+      
+      setTotalAmount(grossTotal);
+      setFinalTotal(discountTotal);
   
       return updatedProducts;
     });
   };
   
+  const handleDiscountChange=(e)=>{
+    const newDiscount = parseFloat(e.target.value) || 0;
+    setDiscount(newDiscount);
+    const newFinalTotal = Math.max(0,totalAmount-newDiscount);
+    setFinalTotal(newFinalTotal);
+  }
 
   const filteredProducts = products.filter((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -157,7 +175,7 @@ const DashboardInvoice = () => {
         <div className='m-5 border border-black'></div>
 
         <div>
-          <h2 className='text-center mt-2 pb-1 font-sans'> Select Products </h2>
+          <h2 className='text-center mt-2 pb-1 font-sans font-medium'> Select Products </h2>
 
           <div className="relative m-4">
             <label htmlFor="Search" className="sr-only"> Search </label>
@@ -199,8 +217,8 @@ const DashboardInvoice = () => {
                 <tr>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Product Name</th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Available Quantity</th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Select Quantity</th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Price</th>
+                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Select Quantity</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -209,6 +227,16 @@ const DashboardInvoice = () => {
                     <tr key={product.name}>
                       <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{product.name}</td>
                       <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{product.quantity}</td>
+                      <td>
+                        
+                        {/* <input
+                              type="number"
+                              placeholder='Price'
+                              onChange={(e) => onProductChange(product.name, 'price', parseFloat(e.target.value) || 0)}
+                              className="w-25 border p-1 rounded-md border-black pe-10 shadow-sm sm:text-sm"
+                            /> */}
+                        {product.price}
+                        </td>
                       <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
                           <input
                             type="number"
@@ -218,15 +246,7 @@ const DashboardInvoice = () => {
                             className="w-25 border p-1 mx-2 rounded-md border-black pe-10 shadow-sm sm:text-sm"
                           />
                       </td>
-                      <td>
-                        
-                      <input
-                            type="number"
-                            placeholder='Price'
-                            onChange={(e) => onProductChange(product.name, 'price', parseFloat(e.target.value) || 0)}
-                            className="w-25 border p-1 rounded-md border-black pe-10 shadow-sm sm:text-sm"
-                          />
-                      </td>
+
                     </tr>
                   ))
                 ) : (
@@ -244,8 +264,24 @@ const DashboardInvoice = () => {
 
         <div className='m-5 border border-black'></div>
 
+        <div className='text-right mr-10 flex items-end justify-end'>
+          <h3 className='text-center mt-2 pb-1 font-sans font-medium'>Discount: </h3>
+
+          <input
+                            type="number"
+                            min="0"
+                            placeholder='Discount'
+                            value={discount}
+                            onChange={handleDiscountChange}
+                            className="w-25 border p-1 mx-2 rounded-md border-black pe-10 shadow-sm sm:text-sm"
+                          />
+
+        </div>
+        <div className='m-5 border border-black'></div>
+
         <div className="text-right mr-10">
-          <h3 className="text-lg font-bold">Total Amount: Rs.{totalAmount.toFixed(2)}</h3>
+          <h3 className="text-lg font-bold">Gross Total: <s>Rs.{totalAmount.toFixed(2)}</s></h3>
+          <h3 className="text-lg font-bold">Final Total After Discount: Rs.{finalTotal.toFixed(2)}</h3>
           <button
             type="submit"
             className="mt-4 px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-black"
