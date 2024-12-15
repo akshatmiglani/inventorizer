@@ -198,7 +198,7 @@ const DashboardInventory = () => {
 
         <form onSubmit={addNewProducts}>
           <span className="text-xs font-medium text-gray-700"> Products </span>
-          <p className='text-xs text-red-500 mb-3'>Excel Sheet Guidelines: Name of Product | Quantity </p>
+          <p className='text-xs text-red-500 mb-3'>Excel Sheet Guidelines: Name of Product | Quantity | Price </p>
           <div className='flex justify-end ml-auto'>
             <input
               type="file"

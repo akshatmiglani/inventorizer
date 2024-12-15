@@ -16,6 +16,8 @@ const invoiceSchema=mongoose.Schema({
     }],
     totalamount:{type: Number, required:true},
     pdfInvoice: {type:String,required:true},
+    discount: {type: Number, required:true, default: 0},
+    finalamount:{type:Number,required:true},
     createdAt: {type: Date, default: Date.now()}
 })
 
