@@ -33,14 +33,9 @@ const UserProvider = ({children}) => {
         
         try {
             document.cookie = "token=; Max-Age=-99999999; path=/;";
-        
-            const response= await axios.post('http://localhost:4000/api/v1/authRoutes/logout',{
-                withCredentials:true,
-            });
-            if(response.status === 200){
-                setUser(null);
-                console.log("User logged out!")
-            }
+            await axios.post('http://localhost:4000/api/v1/authRoutes/logout',{},{withCredentials:true});
+            setUser(null);
+            console.log("User logged out!");
             
         } catch (error) {
             console.log('Error fetching user details',error);
